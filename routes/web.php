@@ -19,7 +19,5 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::feeds();
-
 Route::get('/calendar',                 [CalendarController::class, 'index']);
 Route::get('/calendar/rss',             [CalendarController::class, 'rss']);

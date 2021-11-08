@@ -23,9 +23,9 @@ class CalendarController extends Controller
 
     public function rss(Request $request)
     {
-
         date_default_timezone_set('Europe/Stockholm');
-        setlocale(LC_ALL, 'sv_SE');
+        setlocale(LC_ALL, 'sv');
+        \App::setLocale('sv');
 
         $meta = [
             'title' => 'Kalender för '.$request->id,
@@ -49,10 +49,10 @@ class CalendarController extends Controller
         {
             if($event->startDateTime!==null) {
                 $pubDate=$event->startDateTime->toRssString();
-                $description=$event->startDateTime->format('l j F H:i').' - '.$event->endDateTime->format('H:i');
+                $description=$event->startDateTime->translatedFormat('l j F H:i').' - '.$event->endDateTime->locale('sv')->translatedFormat('H:i');
             } else {
                 $pubDate=$event->startDate->toRssString();
-                $description=$event->startDate->format('l j F');
+                $description=$event->startDate->translatedFormat('l j F');
             }
 
             $item = [
