@@ -14,10 +14,10 @@
             <item>
                 <title><![CDATA[{{ $item['title'] }}]]></title>
                 <link>{{ url($item['link']) }}</link>
-                <description><![CDATA[{!! $item['summary'] !!}]]></description>
+                <description><![CDATA[{!! $item['description'] !!}]]></description>
                 <author><![CDATA[{{ $item['author'] }}]]></author>
                 <guid>{{ url($item['id']) }}</guid>
-                <pubDate>{{ $item['updated'] }}</pubDate>
+                <pubDate>{{ $item['pubDate'] }}</pubDate>
             </item>
         @endforeach
     </channel>

@@ -24,6 +24,9 @@ class CalendarController extends Controller
     public function rss(Request $request)
     {
 
+        date_default_timezone_set('Europe/Stockholm');
+        setlocale(LC_ALL, 'sv_SE');
+
         $meta = [
             'title' => 'Kalender för '.$request->id,
             'link' => \Request::getRequestUri(),
@@ -38,23 +41,27 @@ class CalendarController extends Controller
         $from = Carbon::now();
         $to = Carbon::now()->addDays($maxDays);
 
-        $events = Event::get($from, $to, [], $request->id);
+        $events = Event::get($from, $to, ['orderBy' => 'startTime', 'q' => $request->filter], $request->id);
 
         $items = [];
         $numberOfEvents=0;
         foreach($events as $event)
         {
-            if(isset($request->filter) && strpos($event->description, $request->filter) === false) {
-                continue;
+            if($event->startDateTime!==null) {
+                $pubDate=$event->startDateTime->toRssString();
+                $description=$event->startDateTime->format('l j F H:i').' - '.$event->endDateTime->format('H:i');
+            } else {
+                $pubDate=$event->startDate->toRssString();
+                $description=$event->startDate->format('l j F');
             }
+
             $item = [
                 'title' => $event->name,
                 'link' => $event->htmlLink,
-                'summary' => $event->description,
+                'description' => $description,
                 'author' => $event->creator->email,
                 'id' => $event->id,
-                'updated' => $event->startDateTime,
-                
+                'pubDate' => $pubDate,
             ];
             array_push($items, $item);
             $numberOfEvents++;
