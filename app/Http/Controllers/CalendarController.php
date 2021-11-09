@@ -35,8 +35,8 @@ class CalendarController extends Controller
             'updated' => date(\DateTime::RSS),
         ];
 
-        $maxDays=isset($request->maxDays)?$request->maxDays:7;
-        $maxEvents=isset($request->maxEvents)?$request->maxEvents:7;
+        $maxDays=isset($request->maxDays)?$request->maxDays:365;
+        $maxEvents=isset($request->maxEvents)?$request->maxEvents:100;
 
         $from = Carbon::now();
         $to = Carbon::now()->addDays($maxDays);

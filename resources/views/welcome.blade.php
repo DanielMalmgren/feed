@@ -32,16 +32,26 @@
 
                             <div class="ml-12">
                                 <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
-                                    För att få en RSS ifrån en kalender, gör så här:<br>
-                                    1. Lägg till så att servicekontot calendar-reader@feed-331213.iam.gserviceaccount.com har rättighet att läsa ifrån kalendern<br>
-                                    2. Din kalender går nu att nå på adressen https://feed.itsam.se/calendar/rss?id=whatever@itsam.se&maxDays=30&maxEvents=30&filter=SUND<br><br>
-                                    I adressen ovan, byt ut mot kalenderns mailadress. Övriga argument är frivilliga och gör följande:<br>
-                                    <b>maxDays:</b> Visa max antal dagar framåt i tiden<br>
-                                    <b>maxEvents:</b> Visa max antal händelser<br>
-                                    <b>filter:</b> Visa enbart händelser som innehåller detta ord<br>
+                                    För att få en RSS ifrån en kalender, gör så här:<br><br>
+                                    1. I kalenderns inställningar, lägg till så att servicekontot calendar-reader@feed-331213.iam.gserviceaccount.com har rättighet att läsa ifrån kalendern.<br>
+                                    Det ska då se ut så här:<br>
+                                    <img src="images/Kalenderdelning.png"><br><br>
+                                    2. Fyll i relevanta fält nedan<br>
+                                    <br>
+                                    <label for="googleid">Kalenderns mailadress: </label>
+                                    <input type="text" class="form-control" style="border-width:2px;" id="googleid" name="googleid" oninput="updateUrl()"><br><br>
+                                    <label style="color: rgba(113,128,150)" for="maxEvents">Max händelser att visa: </label>
+                                    <input type="number" class="form-control" style="border-width:2px;" id="maxEvents" name="maxEvents" oninput="updateUrl()"><br><br>
+                                    <label style="color: rgba(113,128,150)" for="maxDays">Max dagar att visa: </label>
+                                    <input type="number" class="form-control" style="border-width:2px;" id="maxDays" name="maxDays" oninput="updateUrl()"><br><br>
+                                    <label style="color: rgba(113,128,150)" for="filter">Ord att filtrera händelser på: </label>
+                                    <input type="text" class="form-control" style="border-width:2px;" id="filter" name="filter" oninput="updateUrl()"><br><br><br>
+                                    3. RSS:en för din kalender finns nu på följande adress:<br>
+                                    <div id="url">Visas när korrekt adress fyllts i!</div>
                                 </div>
                             </div>
                         </div>
+
                 </div>
 
                 <div class="flex justify-center mt-4 sm:items-center sm:justify-between">
@@ -51,5 +61,35 @@
                 </div>
             </div>
         </div>
+
+        <script type="text/javascript" language="javascript">
+            function validateEmail(email) {
+                const re = /\S+@\S+\.\S+/;
+                return re.test(email);
+            }
+
+            function updateUrl() {
+                var googleid=document.getElementById('googleid').value;
+                if (validateEmail(googleid)) {
+                    var url="https://feed.itsam.se/calendar/rss?id="+googleid;
+                    var maxEvents=document.getElementById('maxEvents').value;
+                    if(maxEvents != '') {
+                        url=url+'&maxEvents='+maxEvents
+                    }
+                    var maxDays=document.getElementById('maxDays').value;
+                    if(maxDays != '') {
+                        url=url+'&maxDays='+maxDays
+                    }
+                    var filter=document.getElementById('filter').value;
+                    if(filter != '') {
+                        url=url+'&filter='+filter
+                    }
+                    document.getElementById("url").innerHTML = '<a href="'+url+'">'+url+'</a>';
+                } else {
+                    document.getElementById("url").innerHTML = 'Visas när korrekt adress fyllts i!';
+                }
+            }
+        </script>
+
     </body>
 </html>
