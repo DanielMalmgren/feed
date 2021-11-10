@@ -27,6 +27,8 @@ class CalendarController extends Controller
         setlocale(LC_ALL, 'sv');
         \App::setLocale('sv');
 
+        logger(\Request::getRequestUri());
+
         $meta = [
             'title' => 'Kalender för '.$request->id,
             'link' => \Request::getRequestUri(),
@@ -41,7 +43,17 @@ class CalendarController extends Controller
         $from = Carbon::now();
         $to = Carbon::now()->addDays($maxDays);
 
-        $events = Event::get($from, $to, ['orderBy' => 'startTime', 'q' => $request->filter], $request->id);
+        if(isset($request->id)) {
+            try {
+                $events = Event::get($from, $to, ['orderBy' => 'startTime', 'q' => $request->filter], $request->id);
+            } catch(\Google\Service\Exception $e) {
+                $meta['title'] = 'Calendar not found. Insufficient permissions?';
+                $events = [];
+            }
+        } else {
+            $meta['title'] = 'Calendar ID missing!';
+            $events = [];
+        }
 
         $items = [];
         $numberOfEvents=0;
@@ -69,6 +81,8 @@ class CalendarController extends Controller
                 break;
             }
         }
+
+        logger("Genererar RSS med ".$numberOfEvents." kalenderhändelser");
 
         $data = [
             'events' => $events,
