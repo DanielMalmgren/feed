@@ -42,8 +42,25 @@
                                     <input type="text" class="form-control" style="border-width:2px;" id="googleid" name="googleid" oninput="updateUrl()"><br><br>
                                     <label style="color: rgba(113,128,150)" for="maxEvents">Max händelser att visa: </label>
                                     <input type="number" class="form-control" style="border-width:2px;" id="maxEvents" name="maxEvents" oninput="updateUrl()"><br><br>
-                                    <label style="color: rgba(113,128,150)" for="maxDays">Max dagar att visa: </label>
-                                    <input type="number" class="form-control" style="border-width:2px;" id="maxDays" name="maxDays" oninput="updateUrl()"><br><br>
+
+                                    <label style="color: rgba(113,128,150)" for="period">Period:</label>
+                                    <select name="period" id="period" onchange="updateUrl()">
+                                        <option value="all">Samtliga händelser</option>
+                                        <option value="today">Idag</option>
+                                        <option value="rest_of_today">Idag (endast kommande)</option>
+                                        <option value="this_week">Denna vecka</option>
+                                        <option value="rest_of_this_week">Denna vecka (endast kommande)</option>
+                                        <option value="tomorrow">Imorgon</option>
+                                        <option value="next_week">Nästa vecka</option>
+                                        <option value="days">Begränsat antal dagar</option>
+                                    </select>
+                                    <br><br>
+
+                                    <div id="maxDaysSetting" style="display:none">
+                                        <label style="color: rgba(113,128,150)" for="maxDays">Max dagar att visa: </label>
+                                        <input type="number" class="form-control" style="border-width:2px;" id="maxDays" name="maxDays" oninput="updateUrl()" value="30"><br><br>
+                                    </div>
+
                                     <label style="color: rgba(113,128,150)" for="filter">Ord att filtrera händelser på: </label>
                                     <input type="text" class="form-control" style="border-width:2px;" id="filter" name="filter" oninput="updateUrl()"><br><br><br>
                                     3. RSS:en för din kalender finns nu på följande adress:<br>
@@ -69,6 +86,13 @@
             }
 
             function updateUrl() {
+                var period=document.getElementById("period").value;
+                if(period=='days') {
+                    document.getElementById("maxDaysSetting").style.display="block";
+                } else {
+                    document.getElementById("maxDaysSetting").style.display="none";
+                }
+
                 var googleid=document.getElementById('googleid').value;
                 if (validateEmail(googleid)) {
                     var url="https://feed.itsam.se/calendar/rss?id="+googleid;
@@ -77,7 +101,10 @@
                         url=url+'&maxEvents='+maxEvents
                     }
                     var maxDays=document.getElementById('maxDays').value;
-                    if(maxDays != '') {
+                    if(period != 'all' && period != 'days') {
+                        url=url+'&period='+period
+                    }
+                    if(period=='days') {
                         url=url+'&maxDays='+maxDays
                     }
                     var filter=document.getElementById('filter').value;

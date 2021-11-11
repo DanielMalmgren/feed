@@ -40,8 +40,38 @@ class CalendarController extends Controller
         $maxDays=isset($request->maxDays)?$request->maxDays:365;
         $maxEvents=isset($request->maxEvents)?$request->maxEvents:100;
 
-        $from = Carbon::now();
-        $to = Carbon::now()->addDays($maxDays);
+        switch($request->period) {
+            case 'today':
+                $from = Carbon::parse('today');
+                $to = Carbon::parse('tomorrow');
+                break;
+            case 'rest_of_today':
+                $from = Carbon::now();
+                $to = Carbon::parse('tomorrow');
+                break;
+            case 'this_week':
+                $from = Carbon::parse('last monday');
+                $to = Carbon::parse('next monday');
+                break;
+            case 'rest_of_this_week':
+                $from = Carbon::now();
+                $to = Carbon::parse('next monday');
+                break;
+            case 'tomorrow':
+                $from = Carbon::parse('tomorrow');
+                $to = Carbon::parse('tomorrow')->addDays(1);
+                break;
+            case 'next_week':
+                $from = Carbon::parse('next monday');
+                $to = Carbon::parse('next monday')->addDays(7);
+                break;
+            default:
+                $from = Carbon::now();
+                $to = Carbon::now()->addDays($maxDays);
+        }
+        logger('Period: '.$request->period);
+        logger('From: '.$from);
+        logger('To: '.$to);
 
         if(isset($request->id)) {
             try {
