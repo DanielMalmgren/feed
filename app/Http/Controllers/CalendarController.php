@@ -115,7 +115,6 @@ class CalendarController extends Controller
         logger("Genererar RSS med ".$numberOfEvents." kalenderhändelser");
 
         $data = [
-            'events' => $events,
             'meta' => $meta,
             'items' => $items,
         ];

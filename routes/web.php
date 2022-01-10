@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,3 +22,5 @@ Route::get('/', function () {
 
 Route::get('/calendar',                 [CalendarController::class, 'index']);
 Route::get('/calendar/rss',             [CalendarController::class, 'rss']);
+
+Route::get('/user/rss',                 [UserController::class, 'rss']);
