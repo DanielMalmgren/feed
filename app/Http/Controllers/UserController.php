@@ -14,7 +14,14 @@ class UserController extends Controller
         setlocale(LC_ALL, 'sv');
         \App::setLocale('sv');
 
-        logger(\Request::getRequestUri());
+        $arguments = explode("?", $request->getRequestUri())[1];
+        $argumentsWithoutHash = substr($arguments, 0, strpos($arguments, '&hash'));
+        $md5_hash = md5(env('MD5_SALT').$argumentsWithoutHash);
+
+        if ($request->hash != $md5_hash) {
+            logger("Wrong hash! Expected ".$md5_hash." but got ".$request->hash);
+            abort(403);
+        } 
 
         $maxDays=isset($request->maxDays)?$request->maxDays:365;
         $maxUsers=isset($request->maxUsers)?$request->maxUsers:100;
@@ -36,15 +43,13 @@ class UserController extends Controller
         $numberOfUsers=0;
         foreach($users as $user)
         {
-            logger(print_r($user, true));
-
             $carbon = new Carbon($user->whencreated, 'Europe/Stockholm');
 
             $item = [
                 'title' => $user->displayname[0],
                 'link' => 'https://www.'.$request->organization.'.se',
                 'description' => $user->name[0],
-                'author' => $user->mail[0],
+                'author' => isset($user->mail)?$user->mail[0]:'',
                 'id' => $user->getConvertedGuid(),
                 'pubDate' => $carbon->toRssString(),
                 //'pubDate' => $user->whencreated,
@@ -64,6 +69,6 @@ class UserController extends Controller
         ];
 
         $contents = view('calendar.rss')->with($data);
-        return response($contents)->header('Content-Type', 'application/xml');
+        return response($contents)->header('Content-Type', 'application/rss+xml');
     }
 }
