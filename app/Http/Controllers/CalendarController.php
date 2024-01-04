@@ -79,6 +79,7 @@ class CalendarController extends Controller
             } catch(\Google\Service\Exception $e) {
                 $meta['title'] = 'Calendar not found. Insufficient permissions?';
                 $events = [];
+                logger($e->getMessage());
             }
         } else {
             $meta['title'] = 'Calendar ID missing!';
