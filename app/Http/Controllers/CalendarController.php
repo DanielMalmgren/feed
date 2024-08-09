@@ -67,7 +67,7 @@ class CalendarController extends Controller
                 break;
             default:
                 $from = Carbon::now();
-                $to = Carbon::now()->addDays($maxDays);
+                $to = Carbon::now()->addDays(intval($maxDays));
         }
         logger('Period: '.$request->period);
         logger('From: '.$from);
@@ -102,7 +102,7 @@ class CalendarController extends Controller
                 'title' => $event->name,
                 'link' => $event->htmlLink,
                 'description' => $description,
-                'author' => $event->creator->email,
+                'author' => $event->creator?->email,
                 'id' => $event->id,
                 'pubDate' => $pubDate,
             ];
